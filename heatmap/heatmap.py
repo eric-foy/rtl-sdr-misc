@@ -5,6 +5,13 @@ import os, sys, gzip, math, argparse, colorsys, datetime
 from collections import defaultdict
 from itertools import *
 
+urlretrieve = lambda a, b: None
+try:
+    import urllib.request
+    urlretrieve = urllib.request.urlretrieve
+except:
+    import urllib
+    urlretrieve = urllib.urlretrieve
 
 # todo:
 # matplotlib powered --interactive
@@ -15,10 +22,14 @@ from itertools import *
 # gain normalization
 # check pil version for brokenness
 
-vera_path = os.path.join(sys.path[0], "/usr/share/fonts/TTF/DejaVuSans.ttf")
+vera_url = "https://github.com/keenerd/rtl-sdr-misc/raw/master/heatmap/Vera.ttf"
+vera_path = os.path.join(sys.path[0], "Vera.ttf")
 
 tape_height = 25
 tape_pt = 10
+
+if not os.path.isfile(vera_path):
+    urlretrieve(vera_url, vera_path)
 
 try:
     font = ImageFont.truetype(vera_path, 10)
