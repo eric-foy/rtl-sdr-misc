@@ -5,13 +5,6 @@ import os, sys, gzip, math, argparse, colorsys, datetime
 from collections import defaultdict
 from itertools import *
 
-urlretrieve = lambda a, b: None
-try:
-    import urllib.request
-    urlretrieve = urllib.request.urlretrieve
-except:
-    import urllib
-    urlretrieve = urllib.urlretrieve
 
 # todo:
 # matplotlib powered --interactive
@@ -22,14 +15,10 @@ except:
 # gain normalization
 # check pil version for brokenness
 
-vera_url = "https://github.com/keenerd/rtl-sdr-misc/raw/master/heatmap/Vera.ttf"
-vera_path = os.path.join(sys.path[0], "Vera.ttf")
+vera_path = os.path.join(sys.path[0], "/usr/share/fonts/TTF/DejaVuSans.ttf")
 
 tape_height = 25
 tape_pt = 10
-
-if not os.path.isfile(vera_path):
-    urlretrieve(vera_url, vera_path)
 
 try:
     font = ImageFont.truetype(vera_path, 10)
@@ -217,7 +206,7 @@ def open_raw_data(path):
         raw_data = lambda: gzip_wrap(path)
     return raw_data
 
-def slice_columns(columns, low_freq, high_freq):
+def slice_columns(columns, low, high, low_freq, high_freq):
     start_col = 0
     stop_col  = len(columns)
     if low_freq  is not None and low <= low_freq  <= high:
@@ -258,7 +247,8 @@ def summarize_pass(args):
             break
         times.add(t)
         columns = list(frange(low, high, step))
-        start_col, stop_col = slice_columns(columns, args.low_freq, args.high_freq)
+        start_col, stop_col = slice_columns(columns, low, high, args.low_freq, args.high_freq)
+        print(start_col, stop_col)
         f_key = (columns[start_col], columns[stop_col], step)
         zs = line[6+start_col:6+stop_col+1]
         if not zs:
@@ -380,7 +370,7 @@ def collate_row(x_size):
         high = int(line[3]) + args.offset_freq
         step = float(line[4])
         columns = list(frange(low, high, step))
-        start_col, stop_col = slice_columns(columns, args.low_freq, args.high_freq)
+        start_col, stop_col = slice_columns(columns, low, high, args.low_freq, args.high_freq)
         if args.low_freq and columns[stop_col] < args.low_freq:
             continue
         if args.high_freq and columns[start_col] > args.high_freq:
@@ -622,4 +612,5 @@ create_labels(args, img)
 
 print("saving")
 img.save(args.output_path)
+
 
