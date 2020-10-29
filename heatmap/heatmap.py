@@ -209,7 +209,7 @@ def open_raw_data(path):
 def slice_columns(columns, low, high, low_freq, high_freq):
     start_col = 0
     stop_col  = len(columns)
-    if low_freq  is not None and low <= low_freq  <= high:
+    if low_freq is not None and low_freq <= low <= high:
         start_col = sum(f<low_freq   for f in columns)
     if high_freq is not None and low <= high_freq <= high:
         stop_col  = sum(f<=high_freq for f in columns)
@@ -237,7 +237,7 @@ def summarize_pass(args):
         if '-' not in line[0]:
             t = line[0]
 
-        if args.low_freq  is not None and high < args.low_freq:
+        if args.low_freq  is not None and high <= args.low_freq:
             continue
         if args.high_freq is not None and args.high_freq < low:
             continue
@@ -248,7 +248,6 @@ def summarize_pass(args):
         times.add(t)
         columns = list(frange(low, high, step))
         start_col, stop_col = slice_columns(columns, low, high, args.low_freq, args.high_freq)
-        print(start_col, stop_col)
         f_key = (columns[start_col], columns[stop_col], step)
         zs = line[6+start_col:6+stop_col+1]
         if not zs:
