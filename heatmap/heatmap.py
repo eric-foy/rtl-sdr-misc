@@ -346,6 +346,8 @@ def rgb_fn(palette, min_z, max_z):
     def rgb_inner(z):
         tone = (z - min_z) / (max_z - min_z)
         tone_scaled = int(tone * (len(palette)-1))
+        if tone_scaled >= len(palette):
+            tone_scaled = len(palette)-1
         return palette[tone_scaled]
     return rgb_inner
 
